@@ -1,0 +1,323 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./regenesis.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<title>Regenesis Ventures — Coming Soon</title>
+<link rel="stylesheet" href="./regenesis2.css">
+</helmet>
+<div class="page">
+<div class="frame">
+  <header class="masthead">
+    <h1>Regenesis Ventures</h1>
+    <p class="tag">Coming soon</p>
+  </header>
+  <main class="stage">{{ diagram }}</main>
+  <footer class="base">
+    <span>Longevity venture capital</span>
+    <span style="white-space: nowrap;">&copy; 2026</span>
+  </footer>
+</div>
+</div>
+</x-dc>
+<div class="cursor" hidden>
+  <svg viewBox="0 0 26 26">
+    <circle cx="13" cy="13" r="12" fill="none" stroke="#fff" stroke-width="1"/>
+    <line x1="13" y1="1" x2="13" y2="4" stroke="#fff" stroke-width="1"/>
+    <line x1="25" y1="13" x2="22" y2="13" stroke="#fff" stroke-width="1"/>
+    <line x1="13" y1="25" x2="13" y2="22" stroke="#fff" stroke-width="1"/>
+    <line x1="1" y1="13" x2="4" y2="13" stroke="#fff" stroke-width="1"/>
+    <line class="chand" x1="13" y1="13" x2="13" y2="4.5" stroke="#fff" stroke-width="1.2"/>
+    <circle cx="13" cy="13" r="1.3" fill="#fff"/>
+  </svg>
+</div>
+<script>
+  (function () {
+    var c = document.querySelector('.cursor');
+    if (!matchMedia('(pointer: fine)').matches) return;
+    var on = false;
+    addEventListener('mousemove', function (e) {
+      c.style.transform = 'translate(' + (e.clientX - 9) + 'px, ' + (e.clientY - 9) + 'px)';
+      if (on) c.style.opacity = '1';
+    });
+    document.documentElement.addEventListener('mouseleave', function () {
+      c.style.opacity = '0';
+    });
+    document.documentElement.addEventListener('mouseenter', function () {
+      if (on) c.style.opacity = '1';
+    });
+    // the chronograph takes over once the construction has settled
+    setTimeout(function () {
+      on = true;
+      document.documentElement.classList.add('chrono');
+      c.hidden = false;
+      c.style.opacity = '1';
+    }, 4400);
+  })();
+</script>
+<script type="text/x-dc" data-dc-script data-props="{&quot;$preview&quot;:{&quot;width&quot;:680,&quot;height&quot;:520}}">
+class Component extends DCLogic {
+  renderVals() {
+    const e = React.createElement;
+    const W = 750, Hh = 470;
+
+    const sub = (p, q) => [p[0] - q[0], p[1] - q[1]];
+    const mid = (p, q) => [(p[0] + q[0]) / 2, (p[1] + q[1]) / 2];
+    const dot = (p, q) => p[0] * q[0] + p[1] * q[1];
+
+    // Foot of perpendicular from P onto line QR
+    const foot = (P, Q, R) => {
+      const d = sub(R, Q);
+      const t = dot(sub(P, Q), d) / dot(d, d);
+      return [Q[0] + t * d[0], Q[1] + t * d[1]];
+    };
+
+    const lineInt = (P1, P2, P3, P4) => {
+      const [x1, y1] = P1, [x2, y2] = P2, [x3, y3] = P3, [x4, y4] = P4;
+      const den = (x1 - x2) * (y3 - y4) - (y1 - y2) * (x3 - x4);
+      const t = ((x1 - x3) * (y3 - y4) - (y1 - y3) * (x3 - x4)) / den;
+      return [x1 + t * (x2 - x1), y1 + t * (y2 - y1)];
+    };
+
+    // Triangle vertices, translated so the orthocenter (where the
+    // altitudes and Euler line meet) sits at the viewBox center
+    const orth = (P, Q, R) => lineInt(P, foot(P, Q, R), Q, foot(Q, P, R));
+    // Cx solves slope(C, H3) = -slope(Euler line), so the two X arms
+    // mirror across the vertical axis and the hourglass corners align
+    const A0 = [375, 55], B0 = [52, 395], C0 = [41437 / 76, 395];
+    const H0 = orth(A0, B0, C0);
+    const dc = [W / 2 - H0[0], Hh / 2 - H0[1]];
+    const tr = P => [P[0] + dc[0], P[1] + dc[1]];
+    const A = tr(A0), B = tr(B0), C = tr(C0);
+
+    const H1 = foot(A, B, C), H2 = foot(B, A, C), H3 = foot(C, A, B);
+    const H = lineInt(A, H1, B, H2);
+
+    // Circumcenter: intersection of perpendicular bisectors
+    const perpDir = (P, Q) => [-(Q[1] - P[1]), Q[0] - P[0]];
+    const mAB = mid(A, B), mBC = mid(B, C);
+    const dAB = perpDir(A, B), dBC = perpDir(B, C);
+    const O = lineInt(mAB, [mAB[0] + dAB[0], mAB[1] + dAB[1]], mBC, [mBC[0] + dBC[0], mBC[1] + dBC[1]]);
+
+    // Nine-point center and radius
+    const N = mid(O, H);
+    const I1 = mid(B, C), I2 = mid(C, A), I3 = mid(A, B);
+    const r9 = Math.hypot(N[0] - I1[0], N[1] - I1[1]);
+
+    const J1 = mid(A, H), J2 = mid(B, H), J3 = mid(C, H);
+    const G = [(A[0] + B[0] + C[0]) / 3, (A[1] + B[1] + C[1]) / 3];
+
+    // Clip the infinite line through P, Q to the frame (Liang-Barsky) so
+    // pathLength-normalized draws sweep exactly edge to edge
+    const clipSeg = (P, Q) => {
+      let t0 = 0, t1 = 1;
+      const dx = Q[0] - P[0], dy = Q[1] - P[1];
+      const p = [-dx, dx, -dy, dy];
+      const q = [P[0], W - P[0], P[1], Hh - P[1]];
+      for (let i = 0; i < 4; i++) {
+        if (p[i] === 0) { if (q[i] < 0) return null; continue; }
+        const r = q[i] / p[i];
+        if (p[i] < 0) { if (r > t1) return null; if (r > t0) t0 = r; }
+        else { if (r < t0) return null; if (r < t1) t1 = r; }
+      }
+      return [[P[0] + t0 * dx, P[1] + t0 * dy], [P[0] + t1 * dx, P[1] + t1 * dy]];
+    };
+
+    // v6 choreography, [delay, duration] in seconds: the reasoning first
+    // (dashed triangle, dashed altitudes), then the circle collecting its
+    // points, then the hourglass mark, and a starburst at the crossing.
+    const T = {
+      tri: [0, 0.9],
+      alt1: [0.7, 0.75],
+      alt2: [0.95, 0.75],
+      ra: [1.55, 0.25],
+      npc: [1.8, 1.1],
+      x1: [2.95, 0.6],
+      x2: [3.25, 0.6],
+      caps: [3.85, 0.35]
+    };
+
+    const drawn = ([del, dur]) => ({
+      pathLength: 1, className: 'draw',
+      style: { '--del': `${del}s`, '--dur': `${dur}s` }
+    });
+
+    // Dashed strokes can't dashoffset-draw (the offset shifts the dash
+    // pattern instead of revealing it): draw a solid twin inside a mask
+    // along the same geometry and let it uncover the dashes
+    const masks = [];
+    const inked = (elem, geom, key, t) => {
+      masks.push(e('mask', {
+        key: `m-${key}`, id: `m-${key}`,
+        maskUnits: 'userSpaceOnUse', x: 0, y: -90, width: W, height: Hh + 180
+      }, e(elem, { ...geom, fill: 'none', stroke: '#fff', strokeWidth: 8, ...drawn(t) })));
+      return { mask: `url(#m-${key})` };
+    };
+
+    // Clipped segment ordered top -> bottom so paired strokes sweep together
+    const extSeg = (P, Q) => {
+      const d = sub(Q, P);
+      const len = Math.hypot(d[0], d[1]);
+      const u = [d[0] / len, d[1] / len];
+      let [S, E] = clipSeg(
+        [P[0] - u[0] * 2000, P[1] - u[1] * 2000],
+        [P[0] + u[0] * 2000, P[1] + u[1] * 2000]
+      );
+      if (S[1] > E[1]) { const sw = S; S = E; E = sw; }
+      return [S, E];
+    };
+
+    const lineEl = ([S, E], key, dashed, opacity, t) => {
+      const geom = { x1: S[0], y1: S[1], x2: E[0], y2: E[1] };
+      const base = {
+        key, ...geom,
+        stroke: 'currentColor', strokeWidth: 1.2,
+        strokeDasharray: dashed ? '6 5' : 'none',
+        strokeOpacity: opacity ?? 1
+      };
+      return e('line', dashed ? { ...base, ...inked('line', geom, key, t) } : { ...base, ...drawn(t) });
+    };
+
+    // Strokes draw with linear timing, so pen position is proportional
+    // to elapsed time: each point pops at the instant a pen passes it
+    const at = ([del, dur], f) => del + dur * f;
+    const onLine = ([S, E], P) =>
+      Math.hypot(P[0] - S[0], P[1] - S[1]) / Math.hypot(E[0] - S[0], E[1] - S[1]);
+    const onArc = P => {
+      // fraction of the circle sweep, clockwise from 12 o'clock
+      const a = Math.atan2(P[0] - N[0], N[1] - P[1]);
+      return (a < 0 ? a + 2 * Math.PI : a) / (2 * Math.PI);
+    };
+
+    // v3 dot sizes reused: the nine on-circle points read as small crisp
+    // dots (rc), the off-circle Euler points sit larger at the default r
+    const pt = (P, key, del, r = 2.4) => e('circle', {
+      key, cx: P[0], cy: P[1], r, fill: 'currentColor',
+      className: 'dot', style: { '--del': `${del}s` }
+    });
+    const rc = 0.7938 * 1.5;
+
+    const sAlt1 = extSeg(A, H1), sAlt3 = extSeg(C, H3), sEuler = extSeg(O, H);
+    // the vertical dashed line runs a touch past the frame
+    sAlt1[0][1] -= 90; sAlt1[1][1] += 90;
+    // the dashed diagonal sweeps upward from B's side, as in v1/v5
+    const sAlt2 = extSeg(B, H2).reverse();
+
+    // A dot marks an intersection: it exists only once the second stroke
+    // through it is inked. Collect every pass through the point and pop
+    // at the second-earliest (points on a single stroke pop at its pass).
+    const len = (P, Q) => Math.hypot(Q[0] - P[0], Q[1] - P[1]);
+    const triPass = P => {
+      const onSide = (S, E) => Math.abs(len(S, P) + len(P, E) - len(S, E)) < 1e-6;
+      const lAB = len(A, B), lBC = len(B, C);
+      const d = onSide(A, B) ? len(A, P)
+        : onSide(B, C) ? lAB + len(B, P)
+        : lAB + lBC + len(C, P);
+      return at(T.tri, d / (lAB + lBC + len(C, A)));
+    };
+    const arcPass = P => at(T.npc, onArc(P));
+    const when = ts => ts.sort((a, b) => a - b)[Math.min(1, ts.length - 1)];
+
+    const art = [
+      // the hourglass X: one arm, then its answer
+      lineEl(sAlt3, 'alt3', false, 1, T.x1),
+      lineEl(sEuler, 'euler', false, 1, T.x2),
+      // hourglass caps: join the X arms where they exit the frame
+      ...(() => {
+        const xAtY = (P, Q, y) => P[0] + (y - P[1]) * (Q[0] - P[0]) / (Q[1] - P[1]);
+        const bar = (y, key) => e('line', {
+          key,
+          x1: xAtY(O, H, y), y1: y,
+          x2: xAtY(C, H3, y), y2: y,
+          stroke: 'currentColor', strokeWidth: 1.2,
+          ...drawn(T.caps)
+        });
+        return [bar(1, 'hg-top'), bar(Hh - 1, 'hg-bot')];
+      })(),
+      // nine-point circle, rotated so the sweep starts at 12 o'clock
+      e('circle', { key: 'npc', cx: N[0], cy: N[1], r: r9, fill: 'none', stroke: 'currentColor', strokeWidth: 1.5, transform: `rotate(-90 ${N[0]} ${N[1]})`, ...drawn(T.npc) }),
+      // scaffolding: the given triangle, then the dashed altitudes
+      (() => {
+        const geom = { points: `${A} ${B} ${C}` };
+        return e('polygon', { key: 'tri', ...geom, fill: 'none', stroke: 'currentColor', strokeWidth: 1.8, strokeDasharray: '6 5', strokeOpacity: 0.2, ...inked('polygon', geom, 'tri', T.tri) });
+      })(),
+      lineEl(sAlt1, 'alt1', true, 0.2, T.alt1),
+      lineEl(sAlt2, 'alt2', true, 0.2, T.alt2),
+      // right-angle mark at H1
+      (() => {
+        const s = 10;
+        return e('path', {
+          key: 'ra',
+          d: `M ${H1[0] - s} ${H1[1]} L ${H1[0] - s} ${H1[1] - s} L ${H1[0]} ${H1[1] - s}`,
+          fill: 'none', stroke: 'currentColor', strokeWidth: 1.2, strokeOpacity: 0.2,
+          ...drawn(T.ra)
+        });
+      })(),
+      // the construction settles into a working clock inside the circle:
+      // hands wake once everything is drawn (minute 24s/rev, hour 12x slower)
+      // -- clock disabled --
+      /*
+      (() => {
+        const CLK = 4.4;
+        const hand = (frac, op, period, key) => e('line', {
+          key,
+          x1: N[0], y1: N[1],
+          x2: N[0], y2: N[1] - r9 * frac,
+          stroke: 'currentColor', strokeWidth: 1.2, strokeOpacity: op,
+          className: 'hand',
+          style: { transformOrigin: `${N[0]}px ${N[1]}px`, '--per': `${period}s`, '--del': `${CLK}s` }
+        });
+        return e('g', { key: 'clock', className: 'clock', style: { '--del': `${CLK}s` } }, [
+          hand(0.8, 0.3, 288, 'hh'),
+          hand(0.96, 0.4, 24, 'mh')
+        ]);
+      })(),
+      */
+      // Euler-line points ride their only stroke
+      pt(N, 'n', at(T.x2, onLine(sEuler, N))),
+      pt(G, 'gc', at(T.x2, onLine(sEuler, G))),
+      pt(O, 'o', at(T.x2, onLine(sEuler, O))),
+      // the crossing point of the X (orthocenter) at the center
+      pt(H, 'h', at(T.x2, onLine(sEuler, H))),
+      // feet: altitude x side (the arc may cross them first)
+      pt(H1, 'h1', when([arcPass(H1), triPass(H1), at(T.alt1, onLine(sAlt1, H1))]), rc),
+      pt(H2, 'h2', when([arcPass(H2), triPass(H2), at(T.alt2, onLine(sAlt2, H2))]), rc),
+      pt(H3, 'h3', when([at(T.x1, onLine(sAlt3, H3)), arcPass(H3), triPass(H3)]), rc),
+      // side midpoints: circle x side
+      pt(I1, 'i1', when([arcPass(I1), triPass(I1)]), rc),
+      pt(I2, 'i2', when([arcPass(I2), triPass(I2)]), rc),
+      pt(I3, 'i3', when([arcPass(I3), triPass(I3)]), rc),
+      // Euler midpoints: circle x altitude
+      // J1 (top, on the vertical dashed altitude) removed by request
+      pt(J2, 'j2', when([arcPass(J2), at(T.alt2, onLine(sAlt2, J2))]), rc),
+      pt(J3, 'j3', when([arcPass(J3), at(T.x1, onLine(sAlt3, J3))]), rc)
+    ];
+
+    const kids = [
+      // masks are registered while building the art layer above
+      e('defs', { key: 'defs' }, [
+        e('clipPath', { key: 'cp', id: 'frame' },
+          e('rect', { x: 0, y: -90, width: W, height: Hh + 180 })),
+        ...masks
+      ]),
+      e('g', { key: 'g', clipPath: 'url(#frame)' }, art)
+    ];
+
+    return {
+      diagram: e('svg', {
+        viewBox: `0 0 ${W} ${Hh}`,
+        width: W, height: Hh,
+        preserveAspectRatio: 'xMidYMid meet',
+        style: { display: 'block' }
+      }, kids)
+    };
+  }
+}
+</script>
+</body>
+</html>

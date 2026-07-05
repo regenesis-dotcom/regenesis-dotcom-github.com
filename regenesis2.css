@@ -1,0 +1,159 @@
+  * { box-sizing: border-box; }
+  @font-face {
+    font-family: "Suisse Intl";
+    src: url("./fonts/SuisseIntl-Light.ttf") format("truetype");
+    font-weight: normal;
+    font-style: normal;
+    font-display: swap;
+  }
+  body {
+    margin: 0;
+    background: #000000;
+    color: #f4f4f2;
+    font-family: "Suisse Intl", "Helvetica Neue", Helvetica, Arial, sans-serif;
+    -webkit-font-smoothing: antialiased;
+  }
+  ::selection { background: #10b981; color: #000; }
+  .page {
+    min-height: 100vh;
+    display: flex;
+    padding: 2.5rem 3.5rem;
+    max-width: 1280px;
+    margin: 0 auto;
+  }
+  .frame {
+    flex: 1;
+    min-width: 0;
+    border: 1px solid #f4f4f2;
+    display: grid;
+    grid-template-rows: auto 1fr auto;
+    padding: 1.1rem 1.5rem 0.9rem;
+  }
+  .masthead {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+  }
+  h1 {
+    margin: 0;
+    font-size: clamp(2rem, 4.5vw, 3.75rem);
+    font-weight: normal;
+    line-height: 0.98;
+    letter-spacing: -0.02em;
+    text-transform: none;
+  }
+  .tag {
+    margin: 0.5rem 0 0;
+    color: #f4f4f2;
+    font-size: 0.8rem;
+    font-weight: normal;
+    text-transform: uppercase;
+    letter-spacing: 0.18em;
+    display: flex;
+    align-items: center;
+    gap: 0.75em;
+    white-space: nowrap;
+  }
+  .tag::before {
+    content: "";
+    width: 0.7em;
+    height: 0.7em;
+    background: #10b981;
+    flex: none;
+    transform: translateY(-0.07em);
+    animation: breathe 2.4s ease-in-out infinite;
+  }
+  @keyframes breathe {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.25; }
+  }
+  .stage {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 1.5rem 0;
+    min-height: 0;
+  }
+  .stage svg {
+    max-width: min(100%, 557px);
+    max-height: 48vh;
+    height: auto;
+    /* lock the rendered box to the viewBox ratio so max-height can't
+       squash it out of proportion (which turns the dots into ellipses) */
+    aspect-ratio: 750 / 470;
+    overflow: visible;
+  }
+  .stage .draw {
+    stroke-dasharray: 1;
+    stroke-dashoffset: 1;
+    animation: draw var(--dur, 1s) var(--del, 0s) linear forwards;
+  }
+  .stage .dot {
+    transform-box: fill-box;
+    transform-origin: center;
+    fill-opacity: 1;
+    animation: pop 0.45s var(--del, 0s) cubic-bezier(0.22, 1, 0.36, 1) both;
+  }
+  @keyframes draw { to { stroke-dashoffset: 0; } }
+  @keyframes pop { from { transform: scale(0); opacity: 0; } }
+  .stage .star {
+    transform-box: view-box;
+    animation: twinkle 3.4s calc(var(--del, 0s) + 0.8s) ease-in-out infinite;
+  }
+  @keyframes twinkle {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.7; }
+  }
+  /* the construction settles into a working clock inside the circle */
+  .stage .clock { animation: fade 0.8s var(--del, 0s) both; }
+  .stage .hand {
+    transform-box: view-box;
+    animation: spin var(--per, 24s) var(--del, 0s) linear infinite;
+  }
+  @keyframes fade { from { opacity: 0; } }
+  @keyframes spin { to { transform: rotate(360deg); } }
+  .base {
+    display: flex;
+    justify-content: space-between;
+    gap: 2rem;
+    font-size: 0.72rem;
+    font-weight: normal;
+    text-transform: uppercase;
+    letter-spacing: 0.14em;
+    color: #b9b9b7;
+  }
+  @media (max-width: 640px) {
+    .page { padding: 1.25rem 1rem; }
+    .frame { padding: 1rem 1rem 0.8rem; }
+  }
+  @media (pointer: fine) {
+    html.chrono, html.chrono body { cursor: none; }
+  }
+  .cursor {
+    position: fixed;
+    left: 0;
+    top: 0;
+    width: 18px;
+    height: 18px;
+    mix-blend-mode: difference;
+    pointer-events: none;
+    z-index: 9999;
+    transform: translate(-100px, -100px);
+    opacity: 0;
+    transition: opacity 0.25s ease;
+  }
+  .cursor svg { display: block; width: 100%; height: 100%; }
+  .cursor .chand {
+    transform-box: view-box;
+    transform-origin: 13px 13px;
+    animation: chrono 3s steps(12, end) infinite;
+  }
+  @keyframes chrono { to { transform: rotate(360deg); } }
+  @media (prefers-reduced-motion: reduce) {
+    .stage .draw { animation: none; stroke-dashoffset: 0; }
+    .stage .dot { animation: none; }
+    .stage .star { animation: none; }
+    .stage .clock, .stage .hand { animation: none; }
+    .tag::before { animation: none; }
+    .cursor .chand { animation: none; }
+  }
