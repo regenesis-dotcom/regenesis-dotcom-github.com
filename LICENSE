@@ -1,21 +1,137 @@
-MIT License
+PROPRIETARY AND CONFIDENTIAL LICENSE
 
-Copyright (c) 2026 regenesis-dotcom
+Copyright (c) 2026 Regenesis Ventures (regenesis-dotcom). All Rights Reserved.
 
-Permission is hereby granted, free of charge, to any person obtaining a copy
-of this software and associated documentation files (the "Software"), to deal
-in the Software without restriction, including without limitation the rights
-to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-copies of the Software, and to permit persons to whom the Software is
-furnished to do so, subject to the following conditions:
+================================================================================
+NOTICE
+================================================================================
 
-The above copyright notice and this permission notice shall be included in all
-copies or substantial portions of the Software.
+This repository and all of its contents — including but not limited to source
+code, markup, stylesheets, scripts, fonts, images, designs, layouts, text,
+data, and any accompanying materials (collectively, the "Work") — are the sole
+and exclusive property of Regenesis Ventures and its licensors, and are
+protected by copyright, trade secret, trademark, and other intellectual
+property laws and treaties.
 
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
-SOFTWARE.
+The Work is provided for viewing in an ordinary web browser at its officially
+published address only. NO LICENSE, RIGHT, OR PERMISSION OF ANY KIND is granted,
+whether express, implied, by estoppel, or otherwise, except as explicitly set
+out in a separate written agreement signed by an authorized officer of
+Regenesis Ventures.
+
+================================================================================
+1. PROHIBITED WITHOUT PRIOR WRITTEN PERMISSION
+================================================================================
+
+Absent a prior, separate, written and signed license from Regenesis Ventures,
+you are EXPRESSLY PROHIBITED from doing any of the following, in whole or in
+part, in any medium now known or later devised:
+
+  (a) copying, downloading, saving, cloning, forking, mirroring, or otherwise
+      reproducing the Work, except for the transient copy your browser's cache
+      creates in the ordinary course of viewing the published site;
+
+  (b) using, executing, deploying, or running the Work for any purpose,
+      whether commercial or non-commercial, personal or organizational;
+
+  (c) modifying, adapting, translating, porting, or creating derivative works
+      based upon the Work;
+
+  (d) distributing, publishing, sublicensing, leasing, lending, selling,
+      reselling, transferring, or otherwise making the Work available to any
+      third party;
+
+  (e) displaying, performing, hosting, re-hosting, framing, or embedding the
+      Work, or any part of it, on any other site, application, or service;
+
+  (f) reverse engineering, decompiling, disassembling, or otherwise attempting
+      to derive the source, structure, or organization of any compiled or
+      obfuscated portion of the Work;
+
+  (g) removing, altering, obscuring, or falsifying any copyright, trademark,
+      proprietary, or attribution notice contained in the Work;
+
+  (h) scraping, harvesting, crawling, indexing, caching, or archiving the Work
+      by any automated or manual means, except by general-purpose search
+      engines strictly to the extent permitted by the robots.txt file
+      accompanying the Work; and
+
+  (i) using the Work, or any portion of it, as input to, or to train, fine-tune,
+      pretrain, evaluate, benchmark, ground, retrieve against, or otherwise
+      develop or improve any machine-learning model, large language model,
+      generative-AI system, dataset, or similar technology. This prohibition
+      applies whether or not the output reproduces the Work and whether or not
+      the use would otherwise be considered fair use or fair dealing. All such
+      rights are expressly and unconditionally reserved.
+
+================================================================================
+2. NO TRANSFER OF RIGHTS
+================================================================================
+
+Nothing in your access to or viewing of the Work transfers to you any
+ownership, title, or intellectual property right in the Work. All rights not
+expressly granted in a signed written agreement are reserved by Regenesis
+Ventures. "Regenesis," "Regenesis Ventures," and associated names, logos, and
+marks are trademarks of Regenesis Ventures and may not be used without prior
+written permission.
+
+================================================================================
+3. CONFIDENTIALITY
+================================================================================
+
+To the extent any portion of the Work is not intentionally published to the
+general public, it constitutes the confidential information and trade secrets
+of Regenesis Ventures. You shall not disclose, publish, or exploit any such
+portion and shall take all reasonable measures to preserve its confidentiality.
+
+================================================================================
+4. ENFORCEMENT AND REMEDIES
+================================================================================
+
+Any unauthorized use of the Work is a material breach of this License and may
+constitute infringement of copyright, misappropriation of trade secrets, and
+other violations of law. Regenesis Ventures reserves the right to pursue all
+available legal and equitable remedies, including injunctive relief, actual and
+statutory damages, disgorgement of profits, and recovery of costs and
+reasonable attorneys' fees. You agree that monetary damages may be inadequate
+and that Regenesis Ventures shall be entitled to injunctive relief without the
+necessity of posting a bond.
+
+================================================================================
+5. TERMINATION
+================================================================================
+
+Any permission that may exist terminates automatically and immediately, without
+notice, upon any breach of this License. Upon termination you must cease all use
+of the Work and destroy any copies in your possession or control.
+
+================================================================================
+6. NO WARRANTY
+================================================================================
+
+THE WORK IS PROVIDED "AS IS" AND "AS AVAILABLE," WITHOUT WARRANTY OF ANY KIND,
+EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE, TITLE, AND NON-INFRINGEMENT.
+
+================================================================================
+7. LIMITATION OF LIABILITY
+================================================================================
+
+IN NO EVENT SHALL REGENESIS VENTURES OR ITS OFFICERS, EMPLOYEES, OR LICENSORS BE
+LIABLE FOR ANY CLAIM, DAMAGES, OR OTHER LIABILITY, WHETHER IN AN ACTION OF
+CONTRACT, TORT, OR OTHERWISE, ARISING FROM, OUT OF, OR IN CONNECTION WITH THE
+WORK OR THE USE OR OTHER DEALINGS IN THE WORK.
+
+================================================================================
+8. GENERAL
+================================================================================
+
+This License constitutes the entire understanding regarding the Work and
+supersedes all prior understandings. If any provision is held unenforceable,
+the remaining provisions shall remain in full force and effect. Regenesis
+Ventures' failure to enforce any provision shall not constitute a waiver.
+
+For licensing inquiries, contact Regenesis Ventures at the domain
+regenesisventures.com.
+
+ALL RIGHTS RESERVED.

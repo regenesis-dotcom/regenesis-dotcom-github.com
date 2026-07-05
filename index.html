@@ -3,6 +3,15 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
+<!-- Restrictive Content Security Policy. Note: on GitHub Pages this is
+     delivered via <meta>, so frame-ancestors/sandbox/report-* are ignored
+     by the browser (they require a real HTTP header). 'unsafe-eval' is
+     required because the diagram is compiled at runtime via new Function();
+     'unsafe-inline' covers the inline <script>/<style> in this template. -->
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'self' 'unsafe-inline' 'unsafe-eval'; style-src 'self' 'unsafe-inline'; font-src 'self'; img-src 'self' data:; base-uri 'none'; form-action 'none'; frame-ancestors 'none'; object-src 'none'; upgrade-insecure-requests">
+<meta name="referrer" content="no-referrer">
+<meta name="robots" content="noindex, nofollow, noarchive, nosnippet, noimageindex, noai, noimageai">
+<meta name="googlebot" content="noindex, nofollow, noarchive, nosnippet, noimageindex">
 <script src="./regenesis.js"></script>
 </head>
 <body>
