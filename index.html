@@ -204,9 +204,10 @@ class Component extends DCLogic {
     const onLine = ([S, E], P) =>
       Math.hypot(P[0] - S[0], P[1] - S[1]) / Math.hypot(E[0] - S[0], E[1] - S[1]);
     const onArc = P => {
-      // fraction of the circle sweep, clockwise from 12 o'clock
+      // fraction of the circle sweep, counterclockwise from 12 o'clock
       const a = Math.atan2(P[0] - N[0], N[1] - P[1]);
-      return (a < 0 ? a + 2 * Math.PI : a) / (2 * Math.PI);
+      const cw = (a < 0 ? a + 2 * Math.PI : a) / (2 * Math.PI);
+      return (1 - cw) % 1;
     };
 
     // v3 dot sizes reused: the nine on-circle points read as small crisp
@@ -254,8 +255,6 @@ class Component extends DCLogic {
         });
         return [bar(1, 'hg-top'), bar(Hh - 1, 'hg-bot')];
       })(),
-      // nine-point circle, rotated so the sweep starts at 12 o'clock
-      e('circle', { key: 'npc', cx: N[0], cy: N[1], r: r9, fill: 'none', stroke: 'currentColor', strokeWidth: 1.5, transform: `rotate(-90 ${N[0]} ${N[1]})`, ...drawn(T.npc) }),
       // scaffolding: the given triangle, then the dashed altitudes
       (() => {
         const geom = { points: `${A} ${B} ${C}` };
@@ -310,7 +309,11 @@ class Component extends DCLogic {
       // Euler midpoints: circle x altitude
       // J1 (top, on the vertical dashed altitude) removed by request
       pt(J2, 'j2', when([arcPass(J2), at(T.alt2, onLine(sAlt2, J2))]), rc),
-      pt(J3, 'j3', when([arcPass(J3), at(T.x1, onLine(sAlt3, J3))]), rc)
+      pt(J3, 'j3', when([arcPass(J3), at(T.x1, onLine(sAlt3, J3))]), rc),
+      // nine-point circle, drawn last so it sits on top; the reflection
+      // across the vertical axis through N reverses the sweep to
+      // counterclockwise while keeping the start at 12 o'clock
+      e('circle', { key: 'npc', cx: N[0], cy: N[1], r: r9, fill: 'none', stroke: 'currentColor', strokeWidth: 1.5, transform: `translate(${2 * N[0]} 0) scale(-1 1) rotate(-90 ${N[0]} ${N[1]})`, ...drawn(T.npc) })
     ];
 
     const kids = [
