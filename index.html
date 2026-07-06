@@ -81,6 +81,10 @@ class Component extends DCLogic {
     const e = React.createElement;
     const W = 750, Hh = 470;
 
+    // hold a blank canvas briefly on load before the tracing begins, so the
+    // very start of the first stroke is visible (added to every delay below)
+    const LEAD = 0.25;
+
     const sub = (p, q) => [p[0] - q[0], p[1] - q[1]];
     const mid = (p, q) => [(p[0] + q[0]) / 2, (p[1] + q[1]) / 2];
     const dot = (p, q) => p[0] * q[0] + p[1] * q[1];
@@ -164,7 +168,7 @@ class Component extends DCLogic {
 
     const drawn = ([del, dur]) => ({
       pathLength: 1, className: 'draw',
-      style: { '--del': `${del}s`, '--dur': `${dur}s` }
+      style: { '--del': `${del + LEAD}s`, '--dur': `${dur}s` }
     });
 
     // Dashed strokes can't dashoffset-draw (the offset shifts the dash
@@ -221,7 +225,7 @@ class Component extends DCLogic {
     // dots (rc), the off-circle Euler points sit larger at the default r
     const pt = (P, key, del, r = 2.4) => e('circle', {
       key, cx: P[0], cy: P[1], r, fill: 'currentColor',
-      className: 'dot', style: { '--del': `${del}s` }
+      className: 'dot', style: { '--del': `${del + LEAD}s` }
     });
     const rc = 0.7938 * 1.5;
 
