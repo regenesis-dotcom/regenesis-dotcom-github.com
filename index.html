@@ -146,15 +146,20 @@ class Component extends DCLogic {
     // v6 choreography, [delay, duration] in seconds: the reasoning first
     // (dashed triangle, dashed altitudes), then the circle collecting its
     // points, then the hourglass mark, and a starburst at the crossing.
+    // the construction strokes (tri, altitudes) draw at a uniform ~1000
+    // units/s; the circle keeps its slower 1.1s sweep for weight but begins a
+    // touch before the dashed diagonal (alt2, finishing at 1.79) has finished;
+    // the X arms + caps stay quick as a finishing touch, following tight on
+    // the circle's completion.
     const T = {
-      tri: [0, 0.9],
-      alt1: [0.7, 0.75],
-      alt2: [0.95, 0.75],
+      tri: [0, 1.34],
+      alt1: [0.7, 0.65],
+      alt2: [0.95, 0.84],
       ra: [1.55, 0.25],
-      npc: [1.8, 1.1],
-      x1: [2.95, 0.6],
-      x2: [3.25, 0.6],
-      caps: [3.85, 0.35]
+      npc: [1.6, 1.1],
+      x1: [2.75, 0.6],
+      x2: [3.05, 0.6],
+      caps: [3.65, 0.35]
     };
 
     const drawn = ([del, dur]) => ({
