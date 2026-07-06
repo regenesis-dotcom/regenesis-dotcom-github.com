@@ -203,11 +203,13 @@ class Component extends DCLogic {
     const at = ([del, dur], f) => del + dur * f;
     const onLine = ([S, E], P) =>
       Math.hypot(P[0] - S[0], P[1] - S[1]) / Math.hypot(E[0] - S[0], E[1] - S[1]);
+    // fraction of the circle sweep: counterclockwise, starting at H2 (where
+    // the dashed diagonal altitude crosses the circle) so it begins on the
+    // same point as the triangle rather than at 12 o'clock
     const onArc = P => {
-      // fraction of the circle sweep, counterclockwise from 12 o'clock
-      const a = Math.atan2(P[0] - N[0], N[1] - P[1]);
-      const cw = (a < 0 ? a + 2 * Math.PI : a) / (2 * Math.PI);
-      return (1 - cw) % 1;
+      const ang = Q => Math.atan2(Q[1] - N[1], Q[0] - N[0]);
+      const f = (ang(H2) - ang(P)) / (2 * Math.PI);
+      return ((f % 1) + 1) % 1;
     };
 
     // v3 dot sizes reused: the nine on-circle points read as small crisp
@@ -228,16 +230,24 @@ class Component extends DCLogic {
     // through it is inked. Collect every pass through the point and pop
     // at the second-earliest (points on a single stroke pop at its pass).
     const len = (P, Q) => Math.hypot(Q[0] - P[0], Q[1] - P[1]);
+    // the triangle stroke starts at H2, where the dashed diagonal altitude
+    // (from B) crosses side CA, and sweeps H2 -> A -> B -> C -> back to H2
     const triPass = P => {
       const onSide = (S, E) => Math.abs(len(S, P) + len(P, E) - len(S, E)) < 1e-6;
-      const lAB = len(A, B), lBC = len(B, C);
-      const d = onSide(A, B) ? len(A, P)
-        : onSide(B, C) ? lAB + len(B, P)
-        : lAB + lBC + len(C, P);
-      return at(T.tri, d / (lAB + lBC + len(C, A)));
+      const lHA = len(H2, A), lAB = len(A, B), lBC = len(B, C);
+      const peri = len(C, A) + lAB + lBC;
+      const d = onSide(H2, A) ? len(H2, P)
+        : onSide(A, B) ? lHA + len(A, P)
+        : onSide(B, C) ? lHA + lAB + len(B, P)
+        : lHA + lAB + lBC + len(C, P);
+      return at(T.tri, d / peri);
     };
     const arcPass = P => at(T.npc, onArc(P));
     const when = ts => ts.sort((a, b) => a - b)[Math.min(1, ts.length - 1)];
+
+    // rotate the circle so its stroke begins at H2; the scale(-1 1) then
+    // keeps the sweep counterclockwise
+    const npcPhase = Math.atan2(H2[1] - N[1], N[0] - H2[0]) * 180 / Math.PI;
 
     const art = [
       // the hourglass X: one arm, then its answer
@@ -257,8 +267,10 @@ class Component extends DCLogic {
       })(),
       // scaffolding: the given triangle, then the dashed altitudes
       (() => {
-        const geom = { points: `${A} ${B} ${C}` };
-        return e('polygon', { key: 'tri', ...geom, fill: 'none', stroke: 'currentColor', strokeWidth: 1.8, strokeDasharray: '6 5', strokeOpacity: 0.2, ...inked('polygon', geom, 'tri', T.tri) });
+        // start the outline at H2 (diagonal-altitude x side CA) so the pen
+        // sweeps H2 -> A -> B -> C -> H2, closing where it began
+        const geom = { d: `M ${H2} L ${A} L ${B} L ${C} Z` };
+        return e('path', { key: 'tri', ...geom, fill: 'none', stroke: 'currentColor', strokeWidth: 1.8, strokeDasharray: '6 5', strokeOpacity: 0.2, ...inked('path', geom, 'tri', T.tri) });
       })(),
       lineEl(sAlt1, 'alt1', true, 0.2, T.alt1),
       lineEl(sAlt2, 'alt2', true, 0.2, T.alt2),
@@ -313,7 +325,7 @@ class Component extends DCLogic {
       // nine-point circle, drawn last so it sits on top; the reflection
       // across the vertical axis through N reverses the sweep to
       // counterclockwise while keeping the start at 12 o'clock
-      e('circle', { key: 'npc', cx: N[0], cy: N[1], r: r9, fill: 'none', stroke: 'currentColor', strokeWidth: 1.5, transform: `translate(${2 * N[0]} 0) scale(-1 1) rotate(-90 ${N[0]} ${N[1]})`, ...drawn(T.npc) })
+      e('circle', { key: 'npc', cx: N[0], cy: N[1], r: r9, fill: 'none', stroke: 'currentColor', strokeWidth: 1.5, transform: `translate(${2 * N[0]} 0) scale(-1 1) rotate(${npcPhase} ${N[0]} ${N[1]})`, ...drawn(T.npc) })
     ];
 
     const kids = [
