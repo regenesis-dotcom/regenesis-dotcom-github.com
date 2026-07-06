@@ -129,20 +129,23 @@
   @media (pointer: fine) {
     html.cursor-dot, html.cursor-dot body { cursor: none; }
   }
+  /* the original invert-colors dot: a small white circle on difference blend,
+     eased in JS so it drags a little behind the pointer */
   .cursor {
     position: fixed;
     left: 0;
     top: 0;
     width: 8px;
     height: 8px;
+    margin: -4px 0 0 -4px;               /* centre the box on the pointer */
     border-radius: 50%;
     background: #fff;
     mix-blend-mode: difference;
     pointer-events: none;
     z-index: 9999;
-    transform: translate(-100px, -100px);
     opacity: 0;
     transition: opacity 0.25s ease;
+    will-change: transform;
   }
   @media (prefers-reduced-motion: reduce) {
     .stage .draw { animation: none; stroke-dashoffset: 0; }

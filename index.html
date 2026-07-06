@@ -8,10 +8,15 @@
      by the browser (they require a real HTTP header). 'unsafe-eval' is
      required because the diagram is compiled at runtime via new Function();
      'unsafe-inline' covers the inline <script>/<style> in this template. -->
-<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'self' 'unsafe-inline' 'unsafe-eval'; style-src 'self' 'unsafe-inline'; font-src 'self'; img-src 'self' data:; base-uri 'none'; form-action 'none'; frame-ancestors 'none'; object-src 'none'; upgrade-insecure-requests">
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'self' 'unsafe-inline' 'unsafe-eval'; style-src 'self' 'unsafe-inline'; font-src 'self'; img-src 'self' data:; manifest-src 'self'; base-uri 'none'; form-action 'none'; frame-ancestors 'none'; object-src 'none'; upgrade-insecure-requests">
 <meta name="referrer" content="no-referrer">
 <meta name="robots" content="noindex, nofollow, noarchive, nosnippet, noimageindex, noai, noimageai">
 <meta name="googlebot" content="noindex, nofollow, noarchive, nosnippet, noimageindex">
+<link rel="icon" href="./favicon.ico" sizes="16x16 32x32 48x48">
+<link rel="icon" type="image/svg+xml" href="./favicon.svg">
+<link rel="apple-touch-icon" href="./apple-touch-icon.png">
+<link rel="manifest" href="./site.webmanifest">
+<meta name="theme-color" content="#000000">
 <script src="./regenesis.js"></script>
 </head>
 <body>
@@ -34,23 +39,40 @@
 </div>
 </div>
 </x-dc>
-<div class="cursor" hidden></div>
+<!-- cursor: the original invert-colors dot (white on difference blend), with a
+     bit of easing lag so it drags smoothly behind the pointer. One element,
+     no trail. -->
+<div class="cursor" hidden aria-hidden="true"></div>
 <script>
   (function () {
-    var c = document.querySelector('.cursor');
     if (!matchMedia('(pointer: fine)').matches) return;
+    var el = document.querySelector('.cursor');
+    if (!el) return;
+    var reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
     document.documentElement.classList.add('cursor-dot');
-    c.hidden = false;
+    el.hidden = false;
+
+    var px = innerWidth / 2, py = innerHeight / 2;   // pointer target
+    var x = px, y = py;                              // rendered position (eased)
+    var seen = false, running = false;
+
+    function ensure() { if (!running) { running = true; requestAnimationFrame(frame); } }
     addEventListener('mousemove', function (e) {
-      c.style.transform = 'translate(' + (e.clientX - 4) + 'px, ' + (e.clientY - 4) + 'px)';
-      c.style.opacity = '1';
-    });
-    document.documentElement.addEventListener('mouseleave', function () {
-      c.style.opacity = '0';
-    });
-    document.documentElement.addEventListener('mouseenter', function () {
-      c.style.opacity = '1';
-    });
+      px = e.clientX; py = e.clientY;
+      if (!seen) { seen = true; el.style.opacity = '1'; }
+      ensure();
+    }, { passive: true });
+    document.documentElement.addEventListener('mouseleave', function () { el.style.opacity = '0'; });
+    document.documentElement.addEventListener('mouseenter', function () { if (seen) el.style.opacity = '1'; });
+
+    function frame() {
+      var ease = reduce ? 1 : 0.18;                 // lower -> more drag
+      x += (px - x) * ease; y += (py - y) * ease;
+      el.style.transform = 'translate(' + x + 'px,' + y + 'px)';
+      if (Math.hypot(px - x, py - y) < 0.1) { running = false; return; }  // caught up -> sleep
+      requestAnimationFrame(frame);
+    }
+    ensure();
   })();
 </script>
 <script type="text/x-dc" data-dc-script data-props="{&quot;$preview&quot;:{&quot;width&quot;:680,&quot;height&quot;:520}}">
